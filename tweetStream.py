@@ -1,9 +1,6 @@
 import tweepy
 
-consumerKey = '2G9h07H0K0ituLF6QAzxQUrzP'
-consumerSecret = 'ETn10ZMeNcAZI83tFSBe9Q0TsOTeRjxQEtCEe37NNB9YuDmoNv'
-accessToken = '990189313693487104-r4Bjs1ZSfLOCCwZcCjWLZO4tdakq1BJ'
-accessTokenSecret = 'Y0UFFbixy262EZGG3RPyyBSNLBGGId7f8KvJjr0JAUrYH'
+#ich hab mal die access keys raus, die musst du dann wieder einfügen
 
 class TwitterStreamListener(tweepy.StreamListener):
     """ A listener handles tweets are the received from the stream.
