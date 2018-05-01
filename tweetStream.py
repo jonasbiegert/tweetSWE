@@ -8,17 +8,26 @@ class TwitterStreamListener(tweepy.StreamListener):
     """
 
     def on_status(self, status):
-        getTweet(status)
+        #getTweet(status)
+        TweetIDtoTxt(status)
+
+
+
 
     def on_error(self, status_code):
         if status_code == 403:
             print("The request is understood, but it has been refused or access is not allowed. Limit is maybe reached")
             return False
+
 def getTweet(tweet):
     if len(tweet.text) >= 50:
+        print("NEW TWEET")
         print(tweet.text)
+        print(tweet.lang)
 
-
+def TweetIDtoTxt(tweet):
+    file = open("swe.txt", "a+")
+    file.write(tweet.id_str)
 
 # Authentication
 auth = tweepy.OAuthHandler(consumerKey, consumerSecret) #logs in to twitter
@@ -32,6 +41,8 @@ stream = tweepy.Stream(auth=api.auth, listener=streamListener)
 
 try:
 
-    stream.filter(languages=['de'], track=['ich', 'es', 'gibt'])
+
+    stream.filter(languages= ['sv'], track=['och', 'på', 'som'])
+
 except:
     print("search interrupted")
