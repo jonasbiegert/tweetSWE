@@ -11,23 +11,23 @@ class TwitterStreamListener(tweepy.StreamListener):
         self.UnfilteredCount = 0
         self.FilteredCount = 0
         self.limit = 10
-        self.receivedTweets = "0"
+        self.Tweets = []
 
     def on_data(self, data):
         self.UnfilteredCount += 1
         data_json = json.loads(data)
         if len(data_json["text"]) >= 50:
+            self.Tweets.append(data_json)
             self.FilteredCount += 1
-            TweetToJson(data_json)
         if self.FilteredCount < self.limit:
             return True
         else:
+            TweetToJson(self.Tweets)
             yieldfile = open("yieldrate.txt", "a+")
             yieldfile.write(str(self.FilteredCount) + " out of " + str(self.UnfilteredCount)
-                            +" received tweets\nyieldrate: " + str(self.FilteredCount * 100 / self.UnfilteredCount)
+                            + " received tweets\nyieldrate: " + str(self.FilteredCount * 100 / self.UnfilteredCount)
                             + "%")
             stream.disconnect()
-
 
 
     def on_error(self, status_code):
@@ -36,11 +36,9 @@ class TwitterStreamListener(tweepy.StreamListener):
             return False
 
 
-
-def TweetToJson(tweet):
+def TweetToJson(tweets):
     file = open("swe.json", "a+")
-    json.dump(tweet, file)
-    file.write("\n")
+    file.write(json.dumps(tweets))
 
 # Authentication
 auth = tweepy.OAuthHandler(consumerKey, consumerSecret) #logs in to twitter
@@ -55,7 +53,7 @@ stream = tweepy.Stream(auth=api.auth, listener=streamListener)
 try:
 
 
-    stream.filter(languages= ['sv'], track=['och', 'på', 'som', 'är'], async = 'true')
+    stream.filter(languages= ['sv'], track=['och', 'på', 'som'], async = 'true')
 
 except:
     print("search interrupted")
