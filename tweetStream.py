@@ -19,22 +19,15 @@ class TwitterStreamListener(tweepy.StreamListener):
         if len(data_json["text"]) >= 50:
             self.FilteredCount += 1
             TweetToJson(data_json)
-        print(self.FilteredCount)
         if self.FilteredCount < self.limit:
             return True
         else:
-            print(self.FilteredCount + " out of " + self.UnfilteredCount + " tweets")
+            #das hier schreibt nur die yieldrate in ne extra datei
+            yieldfile = open("yieldrate.txt", "a+")
+            yieldfile.write(str(self.FilteredCount) + " out of " + str(self.UnfilteredCount)
+                            +" received tweets\nyieldrate: " + str(self.FilteredCount * 100 / self.UnfilteredCount)
+                            + "%")
             stream.disconnect()
-
-
-
-   # def on_status(self, status):
-    #    getTweet(status)
-     #   self.FilteredCount += 1
-     #   if self.FilteredCount < self.limit:
-     #       return True
-     #   else:
-     #       stream.disconnect()
 
 
 
@@ -44,16 +37,6 @@ class TwitterStreamListener(tweepy.StreamListener):
             return False
 
 
-
-def getTweet(tweet):
-    if len(tweet.text) >= 50:
-        print("NEW TWEET")
-        print(tweet.text)
-        print(tweet.lang)
-
-def TweetIDtoTxt(tweet):
-    file = open("swe.txt", "a+")
-    file.write(tweet.id_str + "\n")
 
 def TweetToJson(tweet):
     file = open("swe.json", "a+")
@@ -72,7 +55,7 @@ stream = tweepy.Stream(auth=api.auth, listener=streamListener)
 try:
 
 
-    stream.filter(languages= ['sv'], track=['och', 'på', 'som'], async = 'true')
+    stream.filter(languages= ['sv'], track=['och', 'på', 'som', 'är'], async = 'true')
 
 except:
     print("search interrupted")
