@@ -22,7 +22,6 @@ class TwitterStreamListener(tweepy.StreamListener):
         if self.FilteredCount < self.limit:
             return True
         else:
-            #das hier schreibt nur die yieldrate in ne extra datei
             yieldfile = open("yieldrate.txt", "a+")
             yieldfile.write(str(self.FilteredCount) + " out of " + str(self.UnfilteredCount)
                             +" received tweets\nyieldrate: " + str(self.FilteredCount * 100 / self.UnfilteredCount)
@@ -40,7 +39,8 @@ class TwitterStreamListener(tweepy.StreamListener):
 
 def TweetToJson(tweet):
     file = open("swe.json", "a+")
-    file.write(str (tweet))
+    json.dump(tweet, file)
+    file.write("\n")
 
 # Authentication
 auth = tweepy.OAuthHandler(consumerKey, consumerSecret) #logs in to twitter
