@@ -14,13 +14,16 @@ class TwitterStreamListener(tweepy.StreamListener):
         self.receivedTweets = "0"
 
     def on_data(self, data):
+        self.UnfilteredCount += 1
         data_json = json.loads(data)
         TweetToJson(data_json)
-        self.FilteredCount += 1
+        if len(data_json["text"]) >= 50:
+            self.FilteredCount += 1
         print(self.FilteredCount)
         if self.FilteredCount < self.limit:
             return True
         else:
+            print(self.FilteredCount + " out of " + self.UnfilteredCount + " tweets")
             stream.disconnect()
 
 
