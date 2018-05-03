@@ -17,6 +17,7 @@ class TwitterStreamListener(tweepy.StreamListener):
         data_json = json.loads(data)
         TweetToJson(data_json)
         self.FilteredCount += 1
+        print(self.FilteredCount)
         if self.FilteredCount < self.limit:
             return True
         else:
@@ -24,14 +25,13 @@ class TwitterStreamListener(tweepy.StreamListener):
 
 
 
-    def on_status(self, status):
-        getTweet(status)
-        self.count += 1
-        if self.count < self.limit:
-            return True
-        else:
-            stream.disconnect()
-        #TweetIDtoTxt(status)
+   # def on_status(self, status):
+    #    getTweet(status)
+     #   self.FilteredCount += 1
+     #   if self.FilteredCount < self.limit:
+     #       return True
+     #   else:
+     #       stream.disconnect()
 
 
 
@@ -41,7 +41,6 @@ class TwitterStreamListener(tweepy.StreamListener):
             return False
 
 
-tweetCount = 0;
 
 def getTweet(tweet):
     if len(tweet.text) >= 50:
@@ -54,9 +53,8 @@ def TweetIDtoTxt(tweet):
     file.write(tweet.id_str + "\n")
 
 def TweetToJson(tweet):
-    if len(tweet.text) >= 50:
-        file = open("swe.json", "a+")
-        file.write(str (tweet))
+    file = open("swe.json", "a+")
+    file.write(str (tweet))
 
 # Authentication
 auth = tweepy.OAuthHandler(consumerKey, consumerSecret) #logs in to twitter
@@ -75,3 +73,4 @@ try:
 
 except:
     print("search interrupted")
+
