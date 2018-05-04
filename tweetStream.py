@@ -2,31 +2,41 @@ import tweepy
 
 #ich hab mal die access keys raus, die musst du dann wieder einfügen
 class TwitterStreamListener(tweepy.StreamListener):
-    """ A listener handles tweets are the received from the stream.
-    This is a basic listener that just prints received tweets to stdout.
-    """
 
+    #initialize the listener with a variable to keep track of the received tweets and the accepted tweets
+    #as well as a variable for how many tweets we want to get and a list that will temporarily store the
+    #tweets before saving them to a json file
     def __init__(self):
         super().__init__()
-        self.UnfilteredCount = 0
-        self.FilteredCount = 0
+        self.unfilteredCount = 0
+        self.filteredCount = 0
         self.limit = 10
-        self.Tweets = []
+        self.tweets = []
 
     def on_data(self, data):
-        self.UnfilteredCount += 1
+        #increase the received tweets count and load the received tweet to json format
+        self.unfilteredCount += 1
         data_json = json.loads(data)
+
+        #if the tweet text has 50 or more characters, add it to the list
         if len(data_json["text"]) >= 50:
-            self.Tweets.append(data_json)
-            self.FilteredCount += 1
-        if self.FilteredCount < self.limit:
+            self.tweets.append(data_json)
+            self.filteredCount += 1
+
+        #as long as we have less than the amount of tweets we want, we continue
+        if self.filteredCount < self.limit:
             return True
+        #once we've received the desired amount of tweets, write the list containing the tweets to a json file
         else:
-            TweetToJson(self.Tweets)
+            file = open("swe.json", "a+")
+            file.write(json.dumps(self.tweets))
+
+            #write the yieldrate into a separate file
             yieldfile = open("yieldrate.txt", "a+")
-            yieldfile.write(str(self.FilteredCount) + " out of " + str(self.UnfilteredCount)
-                            + " received tweets\nyieldrate: " + str(self.FilteredCount * 100 / self.UnfilteredCount)
+            yieldfile.write(str(self.filteredCount) + " out of " + str(self.unfilteredCount)
+                            + " received tweets\nyieldrate: " + str(self.filteredCount * 100 / self.unfilteredCount)
                             + "%")
+            #and end the stream
             stream.disconnect()
 
 
@@ -36,12 +46,7 @@ class TwitterStreamListener(tweepy.StreamListener):
             return False
 
 
-def TweetToJson(tweets):
-    file = open("swe.json", "a+")
-    file.write(json.dumps(tweets))
-
-# Authentication
-auth = tweepy.OAuthHandler(consumerKey, consumerSecret) #logs in to twitter
+auth = tweepy.OAuthHandler(consumerKey, consumerSecret)
 auth.secure = True
 auth.set_access_token(accessToken, accessTokenSecret)
 api = tweepy.API(auth)
@@ -50,11 +55,7 @@ streamListener = TwitterStreamListener()
 
 stream = tweepy.Stream(auth=api.auth, listener=streamListener)
 
-try:
 
 
-    stream.filter(languages= ['sv'], track=['och', 'på', 'som'], async = 'true')
-
-except:
-    print("search interrupted")
+stream.filter(languages= ['sv'], track=['och', 'på', 'som'], async = 'true')
 
