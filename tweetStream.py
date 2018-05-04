@@ -51,11 +51,9 @@ auth.secure = True
 auth.set_access_token(accessToken, accessTokenSecret)
 api = tweepy.API(auth)
 
+#open a stream and filter for the language and keywords
 streamListener = TwitterStreamListener()
-
 stream = tweepy.Stream(auth=api.auth, listener=streamListener)
-
-
 
 stream.filter(languages= ['sv'], track=['och', 'på', 'som'], async = 'true')
 
